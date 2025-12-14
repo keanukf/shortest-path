@@ -83,6 +83,9 @@ class Animator:
         """
         if not self.algorithm.is_complete:
             self.algorithm.step()
+        elif self.animation:
+            # Stop animation when algorithm is complete
+            self.animation.event_source.stop()
 
         # Update the image
         if self.im:
@@ -100,6 +103,9 @@ class Animator:
         # Reset algorithm
         self.algorithm.reset()
         self.grid.reset()
+        
+        # Initialize algorithm (sets up start node in priority queue, etc.)
+        self.algorithm.initialize()
 
         # Create figure and axes
         self.fig, self.ax = plt.subplots(figsize=self.figsize)

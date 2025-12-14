@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinding Algorithm Comparison</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Pathfinding Algorithm Comparison</h1>
+            <p class="subtitle">Visual analysis of shortest path algorithms</p>
+        </header>
+
+        <div class="controls-panel">
+            <div class="control-group">
+                <label for="preset-select">Grid Preset:</label>
+                <select id="preset-select">
+                    <option value="simple">Simple (30×30)</option>
+                    <option value="maze" selected>Maze (40×40)</option>
+                    <option value="random">Random Obstacles (40×40)</option>
+                    <option value="open_field">Open Field (50×50)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Algorithms:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="algo-dijkstra" checked> Dijkstra</label>
+                    <label><input type="checkbox" id="algo-astar-manhattan" checked> A* (Manhattan)</label>
+                    <label><input type="checkbox" id="algo-astar-euclidean" checked> A* (Euclidean)</label>
+                    <label><input type="checkbox" id="algo-astar-chebyshev"> A* (Chebyshev)</label>
+                </div>
+            </div>
+
+            <button id="run-button" class="run-button">Run Comparison</button>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Running algorithms...</p>
+        </div>
+
+        <div id="visualization-container" class="visualization-container hidden">
+            <div class="animation-controls">
+                <button id="play-pause" class="control-btn">▶ Play</button>
+                <button id="reset" class="control-btn">↻ Reset</button>
+                <label for="speed-slider">Speed:</label>
+                <input type="range" id="speed-slider" min="1" max="10" value="5">
+                <span id="speed-value">5x</span>
+                <span id="step-info" class="step-info">Step: 0 / 0</span>
+            </div>
+
+            <div id="algorithm-panels" class="algorithm-panels">
+                <!-- Algorithm panels will be dynamically created here -->
+            </div>
+
+            <div id="metrics-panel" class="metrics-panel">
+                <h2>Performance Metrics</h2>
+                <div id="metrics-content" class="metrics-content">
+                    <!-- Metrics will be dynamically populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="visualization.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+

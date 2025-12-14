@@ -60,6 +60,18 @@ class PathfindingAlgorithm(ABC):
         """
         pass
 
+    def initialize(self) -> None:
+        """
+        Initialize the algorithm for step-by-step execution.
+        
+        This method sets up the algorithm's initial state (e.g., adding
+        the start node to the priority queue) so that step() can be called.
+        Should be called after reset() and before calling step().
+        """
+        if not self.grid.start_node or not self.grid.end_node:
+            self.is_complete = True
+            return
+
     @abstractmethod
     def step(self) -> bool:
         """

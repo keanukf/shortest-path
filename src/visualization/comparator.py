@@ -101,6 +101,10 @@ class Comparator:
             algo.reset()
         for grid in self.grids:
             grid.reset()
+        
+        # Initialize all algorithms (sets up start node in priority queue, etc.)
+        for algo in self.algorithms:
+            algo.initialize()
 
         # Create figure with subplots
         num_algorithms = len(self.algorithms)

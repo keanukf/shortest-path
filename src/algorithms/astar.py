@@ -59,6 +59,26 @@ class AStar(PathfindingAlgorithm):
         self.priority_queue.clear()
         self.queue_counter = 0
 
+    def initialize(self) -> None:
+        """Initialize the algorithm for step-by-step execution."""
+        super().initialize()
+        if self.is_complete:
+            return
+
+        # Initialize start node
+        start = self.grid.start_node
+        start.g_cost = 0.0
+        start.h_cost = self._calculate_heuristic(start)
+        start.f_cost = start.g_cost + start.h_cost
+        start.cost = start.f_cost  # For compatibility
+
+        # Add to priority queue: (f_cost, g_cost, counter, node)
+        heapq.heappush(
+            self.priority_queue, (start.f_cost, start.g_cost, self.queue_counter, start)
+        )
+        self.queue_counter += 1
+        self._mark_frontier(start)
+
     def _calculate_heuristic(self, node: Node) -> float:
         """
         Calculate heuristic value for a node.

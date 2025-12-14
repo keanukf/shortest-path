@@ -43,6 +43,19 @@ class Dijkstra(PathfindingAlgorithm):
         self.priority_queue.clear()
         self.queue_counter = 0
 
+    def initialize(self) -> None:
+        """Initialize the algorithm for step-by-step execution."""
+        super().initialize()
+        if self.is_complete:
+            return
+
+        # Initialize priority queue with start node
+        start = self.grid.start_node
+        start.cost = 0.0
+        heapq.heappush(self.priority_queue, (0.0, self.queue_counter, start))
+        self.queue_counter += 1
+        self._mark_frontier(start)
+
     def find_path(self) -> Optional[List[Node]]:
         """
         Find the shortest path from start to end using Dijkstra's algorithm.

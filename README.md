@@ -1,13 +1,13 @@
 # Shortest Path Algorithm Visualization
 
-A comprehensive Python project demonstrating shortest path algorithms (A* and Dijkstra) with interactive visualizations, performance analysis, and research-oriented features. This project showcases academic-quality code structure and demonstrates deep understanding of graph search algorithms.
+A comprehensive Python project demonstrating shortest path algorithms (A* and Dijkstra) with modern web-based visualizations, performance analysis, and research-oriented features. This project showcases academic-quality code structure and demonstrates deep understanding of graph search algorithms.
 
 ## Overview
 
 This project provides a complete implementation and visualization framework for studying shortest path algorithms. It includes:
 
 - **Algorithm Implementations**: Dijkstra's algorithm and A* with multiple heuristics
-- **Interactive Visualizations**: Step-by-step animations, interactive obstacle placement, and side-by-side comparisons
+- **Web-Based Visualizations**: Modern, design-focused side-by-side comparisons with step-by-step animations
 - **Performance Analysis**: Comprehensive metrics and benchmarking tools
 - **Research Features**: Comparative analysis, heuristic evaluation, and statistical insights
 
@@ -21,11 +21,13 @@ This project provides a complete implementation and visualization framework for 
   - Euclidean distance (L2 norm)
   - Chebyshev distance (L∞ norm)
 
-### Visualization Modes
+### Visualization
 
-1. **Animated Visualization**: Real-time step-by-step animation showing algorithm exploration
-2. **Interactive Mode**: Place obstacles, set start/end positions, and run algorithms interactively
-3. **Side-by-Side Comparison**: Compare multiple algorithms simultaneously on the same grid
+**Web-Based Side-by-Side Comparison**: Modern, design-focused web interface that displays multiple algorithms side-by-side with synchronized step-by-step animations. Features include:
+- Smooth 60fps animations
+- Real-time performance metrics
+- Multiple grid presets (maze, random obstacles, open field)
+- Academic-quality presentation suitable for papers and presentations
 
 ### Research Capabilities
 
@@ -39,7 +41,8 @@ This project provides a complete implementation and visualization framework for 
 ### Requirements
 
 - Python 3.8 or higher
-- matplotlib >= 3.5.0
+- Flask >= 2.0.0
+- matplotlib >= 3.5.0 (for programmatic visualizations)
 - numpy >= 1.21.0
 
 ### Setup
@@ -62,12 +65,33 @@ pip install -e .
 
 ## Usage
 
-### Basic Example
+### Web-Based Visualization (Recommended)
+
+Launch the modern web-based comparison interface:
+
+```bash
+python examples/web_demo.py
+```
+
+This will:
+1. Start a local web server
+2. Open your browser to `http://127.0.0.1:5000`
+3. Display a beautiful, modern interface for comparing algorithms
+
+**Features:**
+- Select from predefined grid presets (maze, random obstacles, open field)
+- Choose which algorithms to compare (Dijkstra, A* with different heuristics)
+- Watch synchronized step-by-step animations
+- View real-time performance metrics
+- Control animation speed and playback
+
+### Programmatic Usage
+
+You can also use the algorithms programmatically:
 
 ```python
-from src.algorithms import AStar
+from src.algorithms import AStar, Dijkstra
 from src.graph import Grid
-from src.visualization import Animator
 
 # Create a grid with obstacles
 grid = Grid(50, 50)
@@ -75,54 +99,33 @@ grid.add_obstacles_random(density=0.3)
 grid.set_start(0, 0)
 grid.set_end(49, 49)
 
-# Run A* algorithm with visualization
+# Run A* algorithm
 algorithm = AStar(grid, heuristic='manhattan')
-animator = Animator(algorithm, grid, interval=30)
-animator.animate()
+path = algorithm.find_path()
+
+# Get metrics
+metrics = algorithm.get_metrics()
+print(f"Nodes visited: {metrics['nodes_visited']}")
+print(f"Path length: {metrics['path_length']}")
 ```
 
-### Interactive Visualization
+### Matplotlib Visualization (Legacy)
+
+For programmatic matplotlib-based visualizations:
 
 ```python
 from src.algorithms import AStar
 from src.graph import Grid
-from src.visualization import InteractiveVisualizer
+from src.visualization import Animator
 
-grid = Grid(40, 40)
-grid.set_start(5, 5)
-grid.set_end(35, 35)
-
-visualizer = InteractiveVisualizer(grid, AStar)
-visualizer.show()
-
-# Controls:
-#   'o' - Toggle obstacles
-#   's' - Set start position
-#   'e' - Set end position
-#   'r' - Run algorithm
-#   'c' - Clear all
-```
-
-### Algorithm Comparison
-
-```python
-from src.algorithms import AStar, Dijkstra
-from src.graph import Grid
-from src.visualization import Comparator
-
-grid = Grid(40, 40)
-grid.add_obstacles_random(density=0.25)
+grid = Grid(50, 50)
+grid.add_obstacles_random(density=0.3)
 grid.set_start(0, 0)
-grid.set_end(39, 39)
+grid.set_end(49, 49)
 
-algorithms = [
-    Dijkstra(grid),
-    AStar(grid, heuristic='manhattan'),
-    AStar(grid, heuristic='euclidean'),
-]
-
-comparator = Comparator(grid, algorithms)
-comparator.compare_step_by_step(interval=20)
+algorithm = AStar(grid, heuristic='manhattan')
+animator = Animator(algorithm, grid, interval=30)
+animator.animate()
 ```
 
 ### Performance Analysis
@@ -152,15 +155,15 @@ results = compare_algorithms(algorithms)
 
 The `examples/` directory contains ready-to-run demonstration scripts:
 
-1. **basic_demo.py**: Simple animated demonstrations of different algorithms
-2. **interactive_demo.py**: Interactive visualization with obstacle placement
-3. **comparison_demo.py**: Side-by-side comparison of multiple algorithms
+1. **web_demo.py**: Launch the modern web-based comparison interface (recommended)
+2. **basic_demo.py**: Simple animated demonstrations using matplotlib
+3. **comparison_demo.py**: Side-by-side comparison using matplotlib
 
 Run them with:
 ```bash
-python examples/basic_demo.py
-python examples/interactive_demo.py
-python examples/comparison_demo.py
+python examples/web_demo.py      # Web-based visualization
+python examples/basic_demo.py     # Matplotlib animation
+python examples/comparison_demo.py # Matplotlib comparison
 ```
 
 ## Project Structure
@@ -175,16 +178,23 @@ shortest-path/
 │   ├── graph/              # Graph data structures
 │   │   ├── node.py         # Node class
 │   │   └── grid.py         # Grid-based graph
-│   ├── visualization/      # Visualization tools
+│   ├── visualization/      # Visualization tools (matplotlib)
 │   │   ├── animator.py     # Animated visualization
-│   │   ├── interactive.py # Interactive mode
 │   │   └── comparator.py   # Side-by-side comparison
+│   ├── web/                # Web backend
+│   │   ├── api.py          # Flask API server
+│   │   └── data_generator.py # JSON data export
 │   └── utils/              # Utility functions
 │       ├── heuristics.py   # Heuristic functions
 │       └── metrics.py      # Performance metrics
+├── web/                    # Web frontend
+│   ├── index.html          # Main HTML page
+│   ├── styles.css          # Modern CSS styling
+│   ├── visualization.js    # Canvas rendering engine
+│   └── app.js              # Application logic
 ├── examples/               # Example scripts
 ├── tests/                  # Unit tests
-├── requirements.txt         # Dependencies
+├── requirements.txt        # Dependencies
 └── README.md              # This file
 ```
 
