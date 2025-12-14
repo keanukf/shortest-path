@@ -78,6 +78,8 @@ This will:
 2. Open your browser to `http://127.0.0.1:5000`
 3. Display a beautiful, modern interface for comparing algorithms
 
+![Web Demo Screenshot](screenshots/demo_screenshot.png)
+
 **Features:**
 - Select from predefined grid presets (maze, random obstacles, open field)
 - Choose which algorithms to compare (Dijkstra, A* with different heuristics)
