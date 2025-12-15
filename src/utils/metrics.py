@@ -194,9 +194,10 @@ def compare_algorithms(
         for density in obstacle_densities:
             # Create ONE grid for this scenario with random obstacles
             base_grid = Grid(width, height)
-            base_grid.add_obstacles_random(density=density)
+            # Set start and end BEFORE adding obstacles so they're excluded from obstacle placement
             base_grid.set_start(0, 0)
             base_grid.set_end(width - 1, height - 1)
+            base_grid.add_obstacles_random(density=density)
 
             # Test all algorithms on this same grid
             for algorithm in algorithms:
