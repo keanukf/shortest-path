@@ -4,6 +4,8 @@ import time
 from typing import Any, Dict, List
 
 from src.algorithms.base import PathfindingAlgorithm
+from src.graph.grid import Grid
+from src.graph.node import NodeState
 
 
 class AlgorithmMetrics:
@@ -126,6 +128,36 @@ def measure_algorithm(
     return metrics
 
 
+def clone_grid(grid: Grid) -> Grid:
+    """
+    Create a deep copy of a grid with all obstacles, start, and end positions.
+
+    Args:
+        grid: The grid to clone.
+
+    Returns:
+        A new Grid instance with identical configuration.
+    """
+    new_grid = Grid(
+        grid.width, grid.height, grid.allow_diagonal, grid.diagonal_cost
+    )
+
+    # Copy obstacles
+    for row in range(grid.height):
+        for col in range(grid.width):
+            node = grid.get_node(row, col)
+            if node and node.state == NodeState.OBSTACLE:
+                new_grid.add_obstacle(row, col)
+
+    # Copy start and end
+    if grid.start_node:
+        new_grid.set_start(grid.start_node.row, grid.start_node.col)
+    if grid.end_node:
+        new_grid.set_end(grid.end_node.row, grid.end_node.col)
+
+    return new_grid
+
+
 def compare_algorithms(
     algorithms: List[PathfindingAlgorithm],
     grid_sizes: List[tuple[int, int]] | None = None,
@@ -133,6 +165,9 @@ def compare_algorithms(
 ) -> Dict[str, List[AlgorithmMetrics]]:
     """
     Compare multiple algorithms across different scenarios.
+
+    All algorithms are tested on the same grid configuration for each scenario,
+    ensuring a fair comparison with identical obstacles.
 
     Args:
         algorithms: List of algorithm instances to compare.
@@ -147,29 +182,41 @@ def compare_algorithms(
     if obstacle_densities is None:
         obstacle_densities = [0.1, 0.3, 0.5]
 
+    # Initialize results dictionary for all algorithms
     results: Dict[str, List[AlgorithmMetrics]] = {}
-
     for algorithm in algorithms:
         algorithm_name = algorithm.__class__.__name__
         results[algorithm_name] = []
 
-        for width, height in grid_sizes:
-            for density in obstacle_densities:
-                # Create new grid for this test
-                from src.graph.grid import Grid
+    # Outer loops: grid sizes and densities
+    # This ensures all algorithms use the same obstacles for each scenario
+    for width, height in grid_sizes:
+        for density in obstacle_densities:
+            # Create ONE grid for this scenario with random obstacles
+            base_grid = Grid(width, height)
+            base_grid.add_obstacles_random(density=density)
+            base_grid.set_start(0, 0)
+            base_grid.set_end(width - 1, height - 1)
 
-                test_grid = Grid(width, height)
-                test_grid.add_obstacles_random(density=density)
-                test_grid.set_start(0, 0)
-                test_grid.set_end(width - 1, height - 1)
+            # Test all algorithms on this same grid
+            for algorithm in algorithms:
+                # Clone the grid for this algorithm
+                test_grid = clone_grid(base_grid)
 
-                # Create new algorithm instance with test grid
+                # Create new algorithm instance with cloned grid
                 algo_class = algorithm.__class__
-                test_algorithm = algo_class(test_grid)
+                algo_name = algo_class.__name__
+
+                # Preserve AStar heuristic if present
+                if algo_name == "AStar" and hasattr(algorithm, "heuristic_name"):
+                    heuristic = algorithm.heuristic_name
+                    test_algorithm = algo_class(test_grid, heuristic=heuristic)
+                else:
+                    test_algorithm = algo_class(test_grid)
 
                 # Measure performance
                 metrics = measure_algorithm(test_algorithm)
-                results[algorithm_name].append(metrics)
+                results[algo_name].append(metrics)
 
     return results
 
